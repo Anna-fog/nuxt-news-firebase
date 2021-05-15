@@ -1,6 +1,6 @@
 <template>
   <section class="posts-list">
-    <PostPreview v-for="post in posts" :post="post" :key="post.id" />
+    <PostPreview :is-admin="isAdmin" v-for="post in posts" :post="post" :key="post.id" />
   </section>
 </template>
 
@@ -11,6 +11,14 @@ export default {
   components: {
     PostPreview
   },
+
+  props: {
+    isAdmin: {
+      type: Boolean,
+      default: false
+    }
+  },
+
   data () {
     return {
       posts: [
