@@ -1,12 +1,12 @@
 <template>
   <div class="single-post-page">
     <section class="post">
-      <h1 class="post-title">Title of the Post</h1>
+      <h1 class="post-title">{{ loadedPost.title }}</h1>
       <div class="post-details">
-        <div class="post-detail">Last updated on XX</div>
-        <div class="post-detail">Written by Name</div>
+        <div class="post-detail">Last updated on {{ loadedPost.updatedDate }}</div>
+        <div class="post-detail">Written by {{ loadedPost.author }}</div>
       </div>
-      <p class="post-content">Content of the post</p>
+      <p class="post-content">{{ loadedPost.content }}</p>
     </section>
 
     <section class="post-feedback">
@@ -16,6 +16,27 @@
     </section>
   </div>
 </template>
+
+<script>
+export default {
+  asyncData(context, callback) {
+    setTimeout(() => {
+      callback(null, {
+        loadedPost: {
+          id: 1,
+          thumbnail: 'https://www.bbva.com/wp-content/uploads/2017/08/innovacion-bbva-100817.jpg',
+          title: `First post (ID: ${context.params.id})`,
+          previewText: 'This is a post',
+          content: 'Some boring text',
+          author: 'Author`s Name',
+          updatedDate: new Date(),
+        },
+      })
+    }, 1000)
+  }
+}
+
+</script>
 
 <style scoped>
 .single-post-page {
