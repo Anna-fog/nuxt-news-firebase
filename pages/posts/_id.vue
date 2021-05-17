@@ -18,7 +18,6 @@
 </template>
 
 <script>
-import axiosBaseUrl from "~/plugins/axios";
 
 export default {
   data() {
@@ -28,8 +27,8 @@ export default {
   },
 
   asyncData(context) {
-    return axiosBaseUrl.get('/posts/' + context.params.id + '.json')
-    .then(res => {
+    return context.app.$axios.$get('/posts/' + context.params.id + '.json')
+    .then(data => {
 
       const months = [
         "January",
@@ -46,7 +45,7 @@ export default {
         "December"
       ];
 
-      const date = new Date(res.data.updatedDate);
+      const date = new Date(data.updatedDate);
 
       const year = date.getFullYear();
       const month = date.getMonth();
@@ -54,7 +53,7 @@ export default {
       const formattedDate = `${day} ${months[month]} ${year}`;
 
       return {
-        loadedPost: res.data,
+        loadedPost: data,
         newDateFormat: formattedDate
       }
     })

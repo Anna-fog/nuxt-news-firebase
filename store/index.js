@@ -1,5 +1,3 @@
-import axiosBaseUrl from '~/plugins/axios'
-
 export default {
   state() {
     return {
@@ -24,11 +22,11 @@ export default {
 
   actions: {
     nuxtServerInit({ commit }, context) {
-      return axiosBaseUrl.get('/posts.json')
-      .then(res => {
+      return context.app.$axios.$get('/posts.json')
+      .then(data => {
         const postsArray = []
-        for (let key in res.data) {
-          postsArray.push({...res.data[key], id: key})
+        for (let key in data) {
+          postsArray.push({...data[key], id: key})
         }
         commit('setPosts', postsArray)
       })
@@ -41,16 +39,16 @@ export default {
 
     addPost(vuexContext, post) {
       const createdPost = {...post, updatedDate: new Date()}
-      return axiosBaseUrl
-        .post('/posts.json', createdPost)
-        .then(res => {
-          vuexContext.commit('addPost', {...createdPost, id: res.data.name})
+      return this.$axios
+        .$post('/posts.json', createdPost)
+        .then(data => {
+          vuexContext.commit('addPost', {...createdPost, id: data.name})
         })
         .catch(e => console.log(e))
     },
 
     editPost(vuexContext, editedPost) {
-      return  axiosBaseUrl.put('/posts/' +
+      return this.$axios.$put('/posts/' +
         editedPost.id + '.json', editedPost)
         .then(res => {
           vuexContext.commit('editPost', editedPost)
