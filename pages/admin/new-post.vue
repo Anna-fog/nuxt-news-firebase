@@ -19,12 +19,10 @@ export default {
 
   methods: {
     onSubmitted (postData) {
-      axios.post('https://nuxt-blog-50d1a-default-rtdb.europe-west1.firebasedatabase.app/posts.json', {
-        ...postData,
-        updatedDate: new Date()
+      this.$store.dispatch('addPost', postData)
+      .then(() => {
+        this.$router.push('/admin');
       })
-      .then(res => console.log(res))
-      .catch(e => console.log(e))
     }
   }
 
