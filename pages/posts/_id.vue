@@ -18,21 +18,17 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
-  asyncData(context, callback) {
-    setTimeout(() => {
-      callback(null, {
-        loadedPost: {
-          id: 1,
-          thumbnail: 'https://www.bbva.com/wp-content/uploads/2017/08/innovacion-bbva-100817.jpg',
-          title: `First post (ID: ${context.params.id})`,
-          previewText: 'This is a post',
-          content: 'Some boring text',
-          author: 'Author`s Name',
-          updatedDate: new Date(),
-        },
-      })
-    }, 1000)
+  asyncData(context) {
+    return axios.get('https://nuxt-blog-50d1a-default-rtdb.europe-west1.firebasedatabase.app/posts/' + context.params.id + '.json')
+    .then(res => {
+      return {
+        loadedPost: res.data
+      }
+    })
+    .catch(e => context.error(e))
   }
 }
 
