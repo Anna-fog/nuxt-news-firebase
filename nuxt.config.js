@@ -50,9 +50,10 @@ export default {
   build: {
   },
 
-  // router: {
-  //   linkActiveClass: 'active'
-  // },
+  router: {
+    // linkActiveClass: 'active'
+    // middleware: 'log'
+  },
 
   transition: {
     name: 'fade',
