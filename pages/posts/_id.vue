@@ -3,7 +3,7 @@
     <section class="post">
       <h1 class="post-title">{{ loadedPost.title }}</h1>
       <div class="post-details">
-        <div class="post-detail">Last updated on {{ loadedPost.updatedDate }}</div>
+        <div class="post-detail">Last updated on {{ newDateFormat }}</div>
         <div class="post-detail">Written by {{ loadedPost.author }}</div>
       </div>
       <p class="post-content">{{ loadedPost.content }}</p>
@@ -18,14 +18,44 @@
 </template>
 
 <script>
-import axios from "axios";
+import axiosBaseUrl from "~/plugins/axios";
 
 export default {
+  data() {
+    return {
+      newDateFormat: ''
+    }
+  },
+
   asyncData(context) {
-    return axios.get('https://nuxt-blog-50d1a-default-rtdb.europe-west1.firebasedatabase.app/posts/' + context.params.id + '.json')
+    return axiosBaseUrl.get('/posts/' + context.params.id + '.json')
     .then(res => {
+
+      const months = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December"
+      ];
+
+      const date = new Date(res.data.updatedDate);
+
+      const year = date.getFullYear();
+      const month = date.getMonth();
+      const day = date.getDate();
+      const formattedDate = `${day} ${months[month]} ${year}`;
+
       return {
-        loadedPost: res.data
+        loadedPost: res.data,
+        newDateFormat: formattedDate
       }
     })
     .catch(e => context.error(e))

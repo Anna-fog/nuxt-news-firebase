@@ -8,7 +8,7 @@
 
 <script>
 import AdminPostForm from "~/components/Admin/AdminPostForm";
-import axios from "axios";
+import axiosBaseUrl from "~/plugins/axios";
 
 export default {
   layout: 'admin',
@@ -27,7 +27,7 @@ export default {
   },
 
   asyncData(context) {
-    return axios.get('https://nuxt-blog-50d1a-default-rtdb.europe-west1.firebasedatabase.app/posts/' + context.params.postId + '.json')
+    return axiosBaseUrl.get('/posts/' + context.params.postId + '.json')
       .then(res => {
         return {
           loadedPost: {...res.data, id: context.params.postId}

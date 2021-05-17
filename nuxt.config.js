@@ -1,7 +1,7 @@
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    title: 'routing-project',
+    title: 'WD-blog',
     htmlAttrs: {
       lang: 'en'
     },
@@ -18,9 +18,15 @@ export default {
 
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
+    '@/assets/styles/main.css'
   ],
+
+  loading: { color: "#55b0ff", height: '5px', duration: 5000 },
+
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
+    '@/plugins/core-components.js',
+    '@/plugins/date-filter.js',
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -36,5 +42,14 @@ export default {
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
+  },
+
+  // router: {
+  //   linkActiveClass: 'active'
+  // },
+
+  transition: {
+    name: 'fade',
+    mode: 'out-in'
   }
 }
