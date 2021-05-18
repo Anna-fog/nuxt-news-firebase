@@ -3,6 +3,8 @@ const bodyParser = require('body-parser')
 
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
+  mode: 'universal',
+
   head: {
     title: 'WD-blog',
     htmlAttrs: {
