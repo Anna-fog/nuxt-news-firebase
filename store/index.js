@@ -22,6 +22,10 @@ export default {
 
     setToken(state, token) {
       state.token = token
+    },
+
+    clearToken(state) {
+      state.token = null
     }
   },
 
@@ -42,26 +46,26 @@ export default {
       commit('setPosts', posts)
     },
 
-    addPost({ commit }, post) {
+    addPost({ state, commit }, post) {
       const createdPost = {...post, updatedDate: new Date()}
       return this.$axios
-        .$post('/posts.json', createdPost)
+        .$post('/posts.json?auth=' + state.token, createdPost)
         .then(data => {
           commit('addPost', {...createdPost, id: data.name})
         })
         .catch(e => console.log(e))
     },
 
-    editPost({ commit }, editedPost) {
+    editPost({ state, commit }, editedPost) {
       return this.$axios.$put('/posts/' +
-        editedPost.id + '.json', editedPost)
+        editedPost.id + '.json?auth=' + state.token, editedPost)
         .then(res => {
           commit('editPost', editedPost)
         })
         .catch(e => console.log(e))
     },
 
-    authenticateUser({ commit }, authData) {
+    authenticateUser({ commit, dispatch }, authData) {
       let authURL = 'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=' + process.env.fbAPIKey
       if (!authData.isLogin) {
         authURL = 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=' + process.env.fbAPIKey
@@ -73,15 +77,28 @@ export default {
         password: authData.password,
         returnSecureToken: true
       }).then(result => {
-        commit("setToken", result.idToken)
-      })
+        commit("setToken", result.idToken);
+        dispatch('setLogoutTimer', result.expiresIn  * 1000);
+
+        })
         .catch(e => console.log(e))
+    },
+
+    setLogoutTimer({ commit }, duration) {
+      setTimeout(() => {
+        commit('clearToken');
+      }, duration)
     }
   },
+
 
   getters: {
     loadedPosts(state) {
       return state.loadedPosts
+    },
+
+    isAuthenticated(state) {
+      return state.token != null
     }
   }
 }
