@@ -2,6 +2,7 @@ export default {
   state() {
     return {
       loadedPosts: [],
+      token: null
     }
   },
 
@@ -17,6 +18,10 @@ export default {
     editPost(state, editedPost) {
       const postIndex = state.loadedPosts.findIndex(post => post.id === editedPost.id);
       state.loadedPosts[postIndex] = editedPost
+    },
+
+    setToken(state, token) {
+      state.token = token
     }
   },
 
@@ -37,24 +42,41 @@ export default {
       commit('setPosts', posts)
     },
 
-    addPost(vuexContext, post) {
+    addPost({ commit }, post) {
       const createdPost = {...post, updatedDate: new Date()}
       return this.$axios
         .$post('/posts.json', createdPost)
         .then(data => {
-          vuexContext.commit('addPost', {...createdPost, id: data.name})
+          commit('addPost', {...createdPost, id: data.name})
         })
         .catch(e => console.log(e))
     },
 
-    editPost(vuexContext, editedPost) {
+    editPost({ commit }, editedPost) {
       return this.$axios.$put('/posts/' +
         editedPost.id + '.json', editedPost)
         .then(res => {
-          vuexContext.commit('editPost', editedPost)
+          commit('editPost', editedPost)
         })
         .catch(e => console.log(e))
     },
+
+    authenticateUser({ commit }, authData) {
+      let authURL = 'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=' + process.env.fbAPIKey
+      if (!authData.isLogin) {
+        authURL = 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=' + process.env.fbAPIKey
+      }
+
+      return this.$axios
+        .$post(authURL, {
+        email: authData.email,
+        password: authData.password,
+        returnSecureToken: true
+      }).then(result => {
+        commit("setToken", result.idToken)
+      })
+        .catch(e => console.log(e))
+    }
   },
 
   getters: {
