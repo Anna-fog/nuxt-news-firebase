@@ -81,21 +81,13 @@ export default {
       }).then(result => {
         commit("setToken", result.idToken);
         localStorage.setItem('token', result.idToken);
-        localStorage.setItem('tokenExpiration', new Date().getTime() + result.expiresIn * 1000)
+        localStorage.setItem('tokenExpiration', new Date().getTime() + Number.parseInt(result.expiresIn * 1000));
 
         Cookie.set('jwt', result.idToken);
-        Cookie.set('expirationDate', new Date().getTime() + result.expiresIn * 1000);
-
-        dispatch('setLogoutTimer', result.expiresIn  * 1000);
+        Cookie.set('expirationDate', new Date().getTime() + Number.parseInt(result.expiresIn * 1000));
         })
 
         .catch(e => console.log(e))
-    },
-
-    setLogoutTimer({ commit }, duration) {
-      setTimeout(() => {
-        commit('clearToken');
-      }, duration)
     },
 
     initAuth({ commit, dispatch }, req) {
@@ -118,17 +110,23 @@ export default {
       } else {
         token = localStorage.getItem('token');
         expirationDate = localStorage.getItem('tokenExpiration');
-
-        if (new Date().getTime() > +expirationDate || !token) return;
       }
-
-      dispatch('setLogoutTimer', +expirationDate - new Date().getTime());
+      if (new Date().getTime() > +expirationDate || !token) {
+        dispatch('logout')
+        return;
+      }
       commit('setToken', token);
+    },
 
-      // console.log(+expirationDate - new Date().getTime())
+    logout({ commit }) {
+      commit('clearToken');
+      Cookie.remove('jwt');
+      Cookie.remove('expirationDate');
+      localStorage.removeItem('token');
+      localStorage.removeItem('tokenExpiration');
+      this.$router.push('/admin/auth');
     }
   },
-
 
   getters: {
     loadedPosts(state) {
